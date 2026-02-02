@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Attendify | Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+    --bg1:#f5f7ff;
+    --bg2:#eef2ff;
+    --card:#ffffff;
+    --text:#1f2937;
+    --muted:#6b7280;
+    --primary:#6366f1;
+    --primary-dark:#4f46e5;
+    --border:#e5e7eb;
+}
+
+*{ box-sizing:border-box; }
+
+body{
+    margin:0;
+    height:100vh;
+    font-family: system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+    background:linear-gradient(180deg,var(--bg1),var(--bg2));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* Card */
+.card{
+    width:360px;
+    background:var(--card);
+    padding:28px;
+    border-radius:20px;
+    box-shadow:0 20px 40px rgba(0,0,0,.12);
+}
+
+.title{
+    text-align:center;
+    font-size:18px;
+    font-weight:600;
+    margin-bottom:6px;
+}
+
+.subtitle{
+    text-align:center;
+    font-size:13px;
+    color:var(--muted);
+    margin-bottom:22px;
+}
+
+/* Inputs */
+.field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    margin-bottom:14px;
+}
+
+label{
+    font-size:12px;
+    color:var(--muted);
+}
+
+input{
+    height:42px;
+    padding:0 12px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    font-size:14px;
+}
+
+input:focus{
+    outline:none;
+    border-color:var(--primary);
+}
+
+/* Actions */
+.actions{
+    margin-top:10px;
+}
+
+.actions button{
+    width:100%;
+    height:44px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+    color:#fff;
+    font-size:15px;
+    font-weight:500;
+    cursor:pointer;
+}
+
+/* Links */
+.links{
+    display:flex;
+    justify-content:space-between;
+    margin-top:12px;
+    font-size:13px;
+}
+
+.links a{
+    color:var(--primary);
+    text-decoration:none;
+    cursor:pointer;
+}
+
+.links a:hover{
+    text-decoration:underline;
+}
+
+/* Footer */
+.footer{
+    margin-top:18px;
+    text-align:center;
+    font-size:13px;
+    color:var(--muted);
+}
+
+.footer a{
+    color:var(--primary);
+    text-decoration:none;
+    font-weight:500;
+}
+
+/* Message */
+.msg{
+    margin-top:10px;
+    font-size:13px;
+    text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <div class="title">Attendify</div>
+    <div class="subtitle">Faculty Login</div>
+
+    <div class="field">
+        <label>Email</label>
+        <input id="email" type="email" placeholder="faculty@test.com">
+    </div>
+
+    <div class="field">
+        <label>Password</label>
+        <input id="password" type="password" placeholder="••••••••">
+    </div>
+
+    <div class="actions">
+        <button onclick="login()">Login</button>
+    </div>
+
+    <div class="links">
+        <a onclick="forgotPassword()">Forgot password?</a>
+        <a onclick="newUser()">New user?</a>
+    </div>
+
+    <div class="msg" id="msg"></div>
+
+    <div class="footer">
+        © Attendify
+    </div>
+
+</div>
+
+<script>
+function login(){
+    const email = emailInput = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const msg = document.getElementById("msg");
+
+    if(!email || !password){
+        msg.style.color = "red";
+        msg.innerText = "Please enter email & password";
+        return;
+    }
+
+    fetch("http://127.0.0.1:5000/api/faculty/login",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({ email, password })
+    })
+    .then(r=>r.json())
+    .then(res=>{
+        if(res.success){
+            localStorage.setItem("faculty","true");
+            msg.style.color = "green";
+            msg.innerText = "Login successful";
+            setTimeout(()=>{
+                location.href = "dashboard.html";
+            },600);
+        }else{
+            msg.style.color = "red";
+            msg.innerText = "Invalid credentials";
+        }
+    })
+    .catch(()=>{
+        msg.style.color = "red";
+        msg.innerText = "Server error";
+    });
+}
+
+function forgotPassword(){
+    alert(
+`Forgot Password
+
+This feature will:
+• Verify your email
+• Send reset link / OTP
+
+(Backend integration pending)`
+    );
+}
+
+function newUser(){
+    alert(
+`New User Registration
+
+This feature will:
+• Create faculty account
+• Store credentials securely
+
+(Backend integration pending)`
+    );
+}
+</script>
+
+</body>
+</html>
